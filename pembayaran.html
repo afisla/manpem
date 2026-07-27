@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Pembayaran</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Sembunyikan field DP secara default */
+        #dp-field { display: none; }
+        #metode-field { display: none; }
+    </style>
+</head>
+<body class="bg-gray-50 p-4 sm:p-6">
+    <div class="max-w-md mx-auto">
+        <h1 class="text-2xl font-bold mb-6 text-gray-800">Atur Status Pembayaran</h1>
+        
+        <form id="formPembayaran">
+            <div class="space-y-6">
+                <!-- Status Pembayaran -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Pembayaran</label>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <label class="flex-1 p-3 border rounded-lg flex items-center gap-3 cursor-pointer has-[:checked]:bg-indigo-50 has-[:checked]:border-indigo-400">
+                            <input type="radio" name="status" value="Belum Lunas" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500" checked>
+                            <span>Belum Lunas</span>
+                        </label>
+                        <label class="flex-1 p-3 border rounded-lg flex items-center gap-3 cursor-pointer has-[:checked]:bg-indigo-50 has-[:checked]:border-indigo-400">
+                            <input type="radio" name="status" value="DP" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                            <span>DP</span>
+                        </label>
+                        <label class="flex-1 p-3 border rounded-lg flex items-center gap-3 cursor-pointer has-[:checked]:bg-indigo-50 has-[:checked]:border-indigo-400">
+                            <input type="radio" name="status" value="Lunas" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                            <span>Lunas</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Jumlah DP (muncul kondisional) -->
+                <div id="dp-field">
+                    <label for="jumlah_dp" class="block text-sm font-medium text-gray-700">Jumlah DP (Rp)</label>
+                    <input type="number" id="jumlah_dp" name="jumlah_dp" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <!-- Metode Pembayaran (muncul kondisional) -->
+                <div id="metode-field">
+                    <label for="metode" class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
+                    <select id="metode" name="metode" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">-- Pilih Metode --</option>
+                        <option value="Cash">Cash</option>
+                        <option value="E-wallet">E-wallet</option>
+                        <option value="Transfer">Transfer</option>
+                        <option value="Qris">Qris</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <button type="submit" class="w-full bg-indigo-600 text-white py-2.5 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Simpan & Terapkan Pembayaran
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('formPembayaran');
+            const statusRadios = document.querySelectorAll('input[name="status"]');
+            const dpField = document.getElementById('dp-field');
+            const metodeField = document.getElementById('metode-field');
+
+            function toggleFields() {
+                const selectedStatus = document.querySelector('input[name="status"]:checked').value;
+                
+                if (selectedStatus === 'DP') {
+                    dpField.style.display = 'block';
+                    metodeField.style.display = 'block';
+                } else if (selectedStatus === 'Lunas') {
+                    dpField.style.display = 'none';
+                    dpField.querySelector('input').value = ''; // Kosongkan nilai DP
+                    metodeField.style.display = 'block';
+                } else { // Belum Lunas
+                    dpField.style.display = 'none';
+                    dpField.querySelector('input').value = '';
+                    metodeField.style.display = 'block';
+                }
+            }
+
+            statusRadios.forEach(radio => radio.addEventListener('change', toggleFields));
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const data = {
+                    status: document.querySelector('input[name="status"]:checked').value,
+                    metode: document.getElementById('metode').value,
+                    dp: document.getElementById('jumlah_dp').value
+                };
+
+                // Kirim data ke halaman utama (parent window)
+                window.parent.postMessage({ type: 'paymentData', payload: data }, '*');
+            });
+            
+            // Inisialisasi tampilan field saat halaman dimuat
+            toggleFields();
+        });
+    </script>
+</body>
+</html>
+
