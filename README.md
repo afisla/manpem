@@ -38,7 +38,7 @@ sudo service mariadb start
 
 ### WA Gateway (Open-WA) - Opsional
 
-Unduh dan jalankan Open-WA dari https://github.com/open-wa/wa-automate-nodejs, atau gunakan layanan WA Gateway lain yang kompatibel dengan API Open-WA.
+Unduh dan jalankan OpenWA dari https://github.com/rmyndharis/OpenWA , atau gunakan layanan WA Gateway lain yang kompatibel dengan API OpenWA.
 
 ## Instalasi
 
